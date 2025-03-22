@@ -1,7 +1,9 @@
 package com.example.myapp
 
 import android.content.ComponentName
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,8 +14,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
@@ -25,23 +29,28 @@ import java.util.concurrent.Executors
 
 @Composable
 fun MediaPlayerScreen() {
-    val context = LocalContext.current
-    var player by remember { mutableStateOf<Player?>(null) }
     val isPlaying by PlaybackService.isPlaying.collectAsState()
-    val audioUrl = "https://skills-music-api-v2.eliaschen.dev/audio/ocean.mp3"
+    val audioItems = listOf(
+        MediaItem.Builder().setUri("https://skills-music-api-v2.eliaschen.dev/audio/ocean.mp3")
+            .setMediaMetadata(
+                MediaMetadata.Builder().setTitle("Ocean")
+                    .setArtworkUri(Uri.parse("https://skills-music-api-v2.eliaschen.dev/cover/ocean.jpg"))
+                    .build()
+            ).build(),
+        MediaItem.Builder().setUri("https://skills-music-api-v2.eliaschen.dev/audio/city.mp3")
+            .setMediaMetadata(
+                MediaMetadata.Builder().setTitle("City")
+                    .setArtworkUri(Uri.parse("https://skills-music-api-v2.eliaschen.dev/cover/city.jpg"))
+                    .build()
+            ).build(),
+    )
 
-    Column {
-        Text(
-            text = when {
-                player?.isPlaying == true -> "Playing Ocean Audio"
-                player?.isLoading == true -> "Loading Ocean Audio"
-                else -> "Stopped"
-            }
-        )
+    Column(Modifier.statusBarsPadding()) {
         Text(if (isPlaying) "t" else "f")
+        Text(PlaybackService.playerInstance?.mediaMetadata?.title.toString())
         Button(
             onClick = {
-                PlaybackService.playAudio(audioUrl)
+                PlaybackService.playAudio(audioItems)
             },
         ) {
             Text("Play Ocean Audio")

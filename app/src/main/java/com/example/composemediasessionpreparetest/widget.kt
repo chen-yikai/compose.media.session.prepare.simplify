@@ -19,6 +19,7 @@ import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.text.Text
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
@@ -38,9 +39,7 @@ class Widget : GlanceAppWidget() {
                         MediaController.Builder(context, sessionToken).buildAsync()
                     controllerFuture.addListener(
                         {
-
                             player = controllerFuture.get()
-
                         },
                         Executors.newSingleThreadExecutor()
                     )
@@ -53,6 +52,7 @@ class Widget : GlanceAppWidget() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                Text(player?.mediaMetadata?.title.toString())
                 Button(text = "Play/Pause", onClick = {
                     player?.pause()
                 })

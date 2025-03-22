@@ -20,13 +20,13 @@ class PlaybackService : MediaSessionService() {
     private var isForegroundStarted = false
 
     companion object {
-        private val _isPlaying = MutableStateFlow<Boolean>(false)
+        private val _isPlaying = MutableStateFlow(false)
         val isPlaying: StateFlow<Boolean> = _isPlaying
         var playerInstance: ExoPlayer? = null
 
-        fun playAudio(url: String) {
+        fun playAudio(items: List<MediaItem>) {
             playerInstance?.apply {
-                setMediaItem(MediaItem.fromUri(url))
+                setMediaItems(items)
                 prepare()
                 play()
             }
@@ -70,8 +70,6 @@ class PlaybackService : MediaSessionService() {
         return START_STICKY
     }
 
-
-
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
         return mediaSession
     }
@@ -99,8 +97,4 @@ class PlaybackService : MediaSessionService() {
             .setOngoing(true)
             .build()
     }
-}
-
-enum class PlayerState {
-    Playing, Loading, Stopped
 }
